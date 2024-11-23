@@ -3,7 +3,6 @@ import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
 import { MySqlDriver } from '@mikro-orm/mysql';
 import { Options } from '@mikro-orm/core';
 import 'dotenv/config';
-import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 
 const config: Options = {
   driver: MySqlDriver,
@@ -16,9 +15,7 @@ const config: Options = {
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   highlighter: new SqlHighlighter(),
-  metadataProvider: TsMorphMetadataProvider,
-  debug: true,
-  logger: (message: string) => console.log(message),
+  debug: false,
 };
 
 export default config;
