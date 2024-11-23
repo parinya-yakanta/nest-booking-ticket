@@ -20,7 +20,10 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db:generate": "mikro-orm migration:create",
     "db:migrate": "mikro-orm migration:up",
-    "db:rollback": "mikro-orm migration:down"
+    "db:rollback": "mikro-orm migration:down",
+    "db:check": "mikro-orm migration:check",
+    "db:list": "mikro-orm migration:list",
+    "db:fresh": "mikro-orm migration:fresh"
   },
   "dependencies": {
     "@mikro-orm/core": "^6.4.0",
@@ -36,6 +39,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "dotenv": "^16.4.5",
+    "fastify": "^5.1.0",
     "nestjs-pino": "^4.1.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
@@ -62,7 +66,8 @@
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.1.3"
+    "typescript": "^5.1.3",
+    "vitest": "^2.1.5"
   },
   "jest": {
     "moduleFileExtensions": [
