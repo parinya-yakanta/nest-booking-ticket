@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { UsersModule } from './modules/users/users.module';
 import { AccessTokensModule } from './modules/access-tokens/access-tokens.module';
@@ -35,7 +33,7 @@ import { LoggerModule } from 'nestjs-pino';
     BookingsModule,
     OrdersModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
