@@ -1,33 +1,40 @@
-import { Collection, Entity, EntityRepositoryType, OneToMany, OneToOne, PrimaryKey, Property, Ref } from '@mikro-orm/core';
-import { AccessTokensEntity } from './access-tokens.entity';
-import { PartnersEntity } from './partners.entity';
-import { UsersRepository } from 'src/repositories/users.repository';
+import {
+  Collection,
+  Entity,
+  EntityRepositoryType,
+  OneToMany,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { AccessToken } from './access-tokens.entity';
+import { Partner } from './partners.entity';
+import { UserRepository } from 'src/repositories/user.repository';
 
-@Entity({tableName: 'users', repository: () => UsersRepository})
-export class UsersEntity {
-    @PrimaryKey()
-    id!: number;
+@Entity({ tableName: 'users', repository: () => UserRepository })
+export class User {
+  [EntityRepositoryType]?: UserRepository;
 
-    @Property()
-    name: string;
-  
-    @Property()
-    email: string;
-  
-    @Property()
-    password: string;
-  
-    @OneToMany(() => AccessTokensEntity, accessToken => accessToken.user)
-    tokens = new Collection<AccessTokensEntity>(this);
+  @PrimaryKey()
+  id!: number;
 
-    @OneToMany(() => PartnersEntity, partner => partner.user)
-    partners = new Collection<PartnersEntity>(this);
+  @Property()
+  name: string;
 
-    @Property()
-    createdAt = new Date();
+  @Property()
+  email: string;
 
-    @Property({ onUpdate: () => new Date() })
-    updatedAt = new Date();
+  @Property()
+  password: string;
 
-    [EntityRepositoryType]?: UsersRepository;
+  @OneToMany(() => AccessToken, (accessToken) => accessToken.user)
+  tokens = new Collection<AccessToken>(this);
+
+  @OneToMany(() => Partner, (partner) => partner.user)
+  partners = new Collection<Partner>(this);
+
+  @Property({ onCreate: () => new Date(), nullable: true })
+  createdAt = new Date();
+
+  @Property({ onUpdate: () => new Date() })
+  updatedAt = new Date();
 }

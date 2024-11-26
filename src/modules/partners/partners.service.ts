@@ -1,7 +1,11 @@
+import { EntityManager } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
-import { PartnersRepository } from 'src/repositories/partners.repository';
+import { PartnerRepository } from 'src/repositories/partner.repository';
 
 @Injectable()
-export class PartnersService {
-    constructor(private readonly partnersRepository: PartnersRepository) {}
+export class PartnerService {
+  constructor(
+    private readonly partnersRepository: PartnerRepository,
+    private readonly em: EntityManager,
+  ) {}
 }

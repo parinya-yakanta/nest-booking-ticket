@@ -1,5 +1,4 @@
-import { EntityRepository } from "@mikro-orm/mysql";
-import { ProjectsEntity } from "src/entities/projects.entity";
+import { EntityRepository } from '@mikro-orm/mysql';
+import { Project } from 'src/entities/projects.entity';
 
-
-export class ProjectRepository extends EntityRepository<ProjectsEntity> {}
+export class ProjectRepository extends EntityRepository<Project> {}

@@ -1,49 +1,62 @@
-import { Collection, Entity, EntityRepositoryType, Enum, ManyToMany, ManyToOne, PrimaryKey, Property, Ref } from '@mikro-orm/core';
-import { PartnersEntity } from './partners.entity';
+import {
+  Collection,
+  Entity,
+  EntityRepositoryType,
+  Enum,
+  ManyToMany,
+  ManyToOne,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { Partner } from './partners.entity';
 import { Min } from 'class-validator';
-import { ProjectsEntity } from './projects.entity';
-import { BookingsEntity } from './bookings.entity';
-import { TicketsRepository } from 'src/repositories/tickets.repository';
+import { Project } from './projects.entity';
+import { Booking } from './bookings.entity';
 import { TicketUnitType } from 'src/enums/tickets.enum';
+import { TicketRepository } from 'src/repositories/ticket.repository';
 
-@Entity({ tableName: 'tickets', repository: () => TicketsRepository })
-export class TicketsEntity {
-    @PrimaryKey()
-    id!: number;
+@Entity({ tableName: 'tickets', repository: () => TicketRepository })
+export class Ticket {
+  [EntityRepositoryType]?: TicketRepository;
 
-    @ManyToOne(() => PartnersEntity)
-    partner: Ref<PartnersEntity>;
+  @PrimaryKey()
+  id!: number;
 
-    @ManyToOne(() => ProjectsEntity)
-    project: Ref<ProjectsEntity>;
+  @ManyToOne(() => Partner)
+  partner: Partner;
 
-    @Property()
-    code: string;
+  @ManyToOne(() => Project)
+  project: Project;
 
-    @Property()
-    name: string;
+  @Property()
+  code: string;
 
-    @Property()
-    description: string;
+  @Property()
+  name: string;
 
-    @Property()
-    price: number;
+  @Property()
+  description: string;
 
-    @Property()
-    @Min(1)
-    quantity: number;
+  @Property()
+  price: number;
 
-    @Enum({ name: 'unit_type', items: () => TicketUnitType, default: TicketUnitType.TIME })
-    unitType: TicketUnitType = TicketUnitType.TIME
+  @Property()
+  @Min(1)
+  quantity: number;
 
-    @ManyToMany(() => BookingsEntity)
-    bookings: Collection<BookingsEntity> = new Collection<BookingsEntity>(this);
+  @Enum({
+    name: 'unit_type',
+    items: () => TicketUnitType,
+    default: TicketUnitType.TIME,
+  })
+  unitType: TicketUnitType = TicketUnitType.TIME;
 
-    @Property()
-    createdAt = new Date();
+  @ManyToMany(() => Booking)
+  bookings: Collection<Booking> = new Collection<Booking>(this);
 
-    @Property({ onUpdate: () => new Date() })
-    updatedAt = new Date();
+  @Property({ onCreate: () => new Date(), nullable: true })
+  createdAt = new Date();
 
-    [EntityRepositoryType]?: TicketsRepository;
+  @Property({ onUpdate: () => new Date() })
+  updatedAt = new Date();
 }

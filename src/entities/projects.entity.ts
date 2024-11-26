@@ -1,47 +1,55 @@
-import { Collection, Entity, EntityRepositoryType, Enum, ManyToOne, OneToMany, PrimaryKey, Property, Ref } from '@mikro-orm/core';
-import { PartnersEntity } from './partners.entity';
-import { TicketsEntity } from './tickets.entity';
+import {
+  Collection,
+  Entity,
+  EntityRepositoryType,
+  Enum,
+  ManyToOne,
+  OneToMany,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { Partner } from './partners.entity';
+import { Ticket } from './tickets.entity';
 import { ProjectStatus } from 'src/enums/projects.enum';
 import { ProjectRepository } from 'src/repositories/project.repository';
 
-
 @Entity({ tableName: 'projects', repository: () => ProjectRepository })
-export class ProjectsEntity {
-    @PrimaryKey()
-    id!: number;
+export class Project {
+  [EntityRepositoryType]?: ProjectRepository;
 
-    @Property({ unique: true })
-    code: string;
+  @PrimaryKey()
+  id!: number;
 
-    @ManyToOne(() => PartnersEntity)
-    partner: Ref<PartnersEntity>;
+  @Property({ unique: true })
+  code: string;
 
-    @OneToMany(() => TicketsEntity, ticket => ticket.project)
-    tickets = new Collection<TicketsEntity>(this);
+  @ManyToOne(() => Partner)
+  partner: Partner;
 
-    @Property()
-    name: string;
+  @OneToMany(() => Ticket, (ticket) => ticket.project)
+  tickets = new Collection<Ticket>(this);
 
-    @Property({ type: 'text', nullable: true })
-    description: string;
+  @Property()
+  name: string;
 
-    @Property({ type: 'text', nullable: true })
-    logo: string;
+  @Property({ type: 'text', nullable: true })
+  description: string;
 
-    @Enum({ items: () => ProjectStatus, default: ProjectStatus.IN_PROGRESS })
-    status: ProjectStatus = ProjectStatus.IN_PROGRESS;
+  @Property({ type: 'text', nullable: true })
+  logo: string;
 
-    @Property({ type: 'datetime', name: 'start_at', nullable: true })
-    startAt: Date;
+  @Enum({ items: () => ProjectStatus, default: ProjectStatus.IN_PROGRESS })
+  status: ProjectStatus = ProjectStatus.IN_PROGRESS;
 
-    @Property({ type: 'datetime', name: 'end_at', nullable: true })
-    endAt: Date;
+  @Property({ type: 'datetime', name: 'start_at', nullable: true })
+  startAt: Date;
 
-    @Property({ type: 'datetime', name: 'created_at' })
-    createdAt = new Date();
+  @Property({ type: 'datetime', name: 'end_at', nullable: true })
+  endAt: Date;
 
-    @Property({ onUpdate: () => new Date(), type: 'datetime', name: 'updated_at' })
-    updatedAt = new Date();
+  @Property({ onCreate: () => new Date(), nullable: true })
+  createdAt = new Date();
 
-    [EntityRepositoryType]?: ProjectRepository;
+  @Property({ onUpdate: () => new Date() })
+  updatedAt = new Date();
 }

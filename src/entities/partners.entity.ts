@@ -1,47 +1,56 @@
-import { Collection, Entity, EntityRepositoryType, Enum, OneToMany, PrimaryKey, Property, OneToOne, Ref, ManyToOne } from '@mikro-orm/core';
-import { TicketsEntity } from './tickets.entity';
-import { ProjectsEntity } from './projects.entity';
-import { UsersEntity } from './users.entity';
-import { PartnersRepository } from 'src/repositories/partners.repository';
+import {
+  Collection,
+  Entity,
+  EntityRepositoryType,
+  Enum,
+  OneToMany,
+  PrimaryKey,
+  Property,
+  ManyToOne,
+} from '@mikro-orm/core';
+import { Ticket } from './tickets.entity';
+import { Project } from './projects.entity';
+import { User } from './users.entity';
 import { PartnerStatus, PartnerType } from 'src/enums/partners.enum';
+import { PartnerRepository } from 'src/repositories/partner.repository';
 
-@Entity({ tableName: 'partners', repository: () => PartnersRepository })
-export class PartnersEntity {
-    @PrimaryKey()
-    id!: number;
+@Entity({ tableName: 'partners', repository: () => PartnerRepository })
+export class Partner {
+  [EntityRepositoryType]?: PartnerRepository;
 
-    @Property({ unique: true })
-    code: string;
+  @PrimaryKey()
+  id!: number;
 
-    @Property({ nullable: true })
-    logo: string;
+  @Property({ unique: true })
+  code: string;
 
-    @Property()
-    name: string;
+  @Property({ nullable: true })
+  logo: string;
 
-    @Property({ type: 'text', nullable: true })
-    address: string;
+  @Property()
+  name: string;
 
-    @ManyToOne(() => UsersEntity)
-    user: Ref<UsersEntity>;
+  @Property({ type: 'text', nullable: true })
+  address: string;
 
-    @OneToMany(() => TicketsEntity, ticket => ticket.partner)
-    tickets = new Collection<TicketsEntity>(this);
+  @ManyToOne(() => User)
+  user: User;
 
-    @OneToMany(() => ProjectsEntity, project => project.partner)
-    projects = new Collection<ProjectsEntity>(this);
+  @OneToMany(() => Ticket, (ticket) => ticket.partner)
+  tickets = new Collection<Ticket>(this);
 
-    @Enum({ items: () => PartnerType, default: PartnerType.CLASSIC })
-    type: PartnerType = PartnerType.CLASSIC;
+  @OneToMany(() => Project, (project) => project.partner)
+  projects = new Collection<Project>(this);
 
-    @Enum({ items: () => PartnerStatus, default: PartnerStatus.ACTIVE })
-    status: PartnerStatus = PartnerStatus.ACTIVE;
+  @Enum({ items: () => PartnerType, default: PartnerType.CLASSIC })
+  type: PartnerType = PartnerType.CLASSIC;
 
-    @Property()
-    createdAt = new Date();
+  @Enum({ items: () => PartnerStatus, default: PartnerStatus.ACTIVE })
+  status: PartnerStatus = PartnerStatus.ACTIVE;
 
-    @Property({ onUpdate: () => new Date() })
-    updatedAt = new Date();
+  @Property({ onCreate: () => new Date(), nullable: true })
+  createdAt = new Date();
 
-    [EntityRepositoryType]?: PartnersRepository;
+  @Property({ onUpdate: () => new Date() })
+  updatedAt = new Date();
 }

@@ -1,40 +1,49 @@
-import { Collection, Entity, EntityRepositoryType, Enum, ManyToMany, ManyToOne, PrimaryKey, Property, Ref } from '@mikro-orm/core';
+import {
+  Collection,
+  Entity,
+  EntityRepositoryType,
+  Enum,
+  ManyToMany,
+  ManyToOne,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { Ticket } from './tickets.entity';
+import { Partner } from './partners.entity';
 import { BookingStatus } from 'src/enums/bookings.enum';
-import { TicketsEntity } from './tickets.entity';
-import { PartnersEntity } from './partners.entity';
-import { BookingsRepository } from 'src/repositories/bookings.repository';
+import { BookingRepository } from 'src/repositories/booking.repository';
 
-@Entity({ tableName: 'bookings', repository: () => BookingsRepository })
-export class BookingsEntity {
-    @PrimaryKey()
-    id!: number;
+@Entity({ tableName: 'bookings', repository: () => BookingRepository })
+export class Booking {
+  [EntityRepositoryType]?: BookingRepository;
 
-    @Property({ unique: true })
-    code: string;
+  @PrimaryKey()
+  id!: number;
 
-    @Property()
-    name: string;
+  @Property({ unique: true })
+  code: string;
 
-    @Property()
-    description: string;
+  @Property()
+  name: string;
 
-    @Property({ type: 'datetime', name: 'expired_at', nullable: true })
-    expiredAt: Date;
+  @Property()
+  description: string;
 
-    @Enum({ items: () => BookingStatus, default: BookingStatus.PENDING })
-    status: BookingStatus = BookingStatus.PENDING;
+  @Property({ type: 'datetime', name: 'expired_at', nullable: true })
+  expiredAt: Date;
 
-    @ManyToOne(() => PartnersEntity)
-    partner: Ref<PartnersEntity>;
+  @Enum({ items: () => BookingStatus, default: BookingStatus.PENDING })
+  status: BookingStatus = BookingStatus.PENDING;
 
-    @ManyToMany(() => TicketsEntity)
-    tickets: Collection<TicketsEntity> = new Collection<TicketsEntity>(this);
+  @ManyToOne(() => Partner)
+  partner: Partner;
 
-    @Property()
-    createdAt = new Date();
+  @ManyToMany(() => Ticket)
+  tickets: Collection<Ticket> = new Collection<Ticket>(this);
 
-    @Property({ onUpdate: () => new Date() })
-    updatedAt = new Date();
+  @Property({ onCreate: () => new Date(), nullable: true })
+  createdAt = new Date();
 
-    [EntityRepositoryType]?: BookingsRepository;
+  @Property({ onUpdate: () => new Date() })
+  updatedAt = new Date();
 }

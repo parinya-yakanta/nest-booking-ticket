@@ -1,10 +1,9 @@
-import { Logger } from '@nestjs/common';
-import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
 import { MySqlDriver } from '@mikro-orm/mysql';
-import { Options } from '@mikro-orm/core';
-import 'dotenv/config';
+import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
+import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
+import { Logger } from '@nestjs/common';
 
-const config: Options = {
+export default () => ({
   driver: MySqlDriver,
   entities: ['dist/entities/**/*.entity.js'],
   entitiesTs: ['src/entities/**/*.entity.ts'],
@@ -18,8 +17,9 @@ const config: Options = {
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   highlighter: new SqlHighlighter(),
-  debug: false,
+  metadataProvider: TsMorphMetadataProvider,
+  debug: true,
   logger: (message: string) => Logger.log(message),
-};
-
-export default config;
+  // allowGlobalContext: true,
+  // registerRequestContext: false,
+});

@@ -3,15 +3,21 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { UsersModule } from './modules/users/users.module';
 import { AccessTokensModule } from './modules/access-tokens/access-tokens.module';
 import { TicketsModule } from './modules/tickets/tickets.module';
-import { PartnersModule } from './modules/partners/partners.module';
+import { PartnerModule } from './modules/partners/partners.module';
 import { ProjectsModule } from './modules/projects/projects.module';
-import { BookingsModule } from './modules/bookings/bookings.module';
+import { BookingModule } from './modules/bookings/bookings.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { LoggerModule } from 'nestjs-pino';
 import { HeadersMiddleware } from './middlewares/headers.middleware';
+import { AuthModule } from './modules/auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     MikroOrmModule.forRoot(),
     LoggerModule.forRoot({
       pinoHttp: {
@@ -21,7 +27,7 @@ import { HeadersMiddleware } from './middlewares/headers.middleware';
             colorize: true,
             translateTime: 'yyyy/mm/dd HH:MM',
             singleLine: true,
-            ignore: 'pid,hostname', 
+            ignore: 'pid,hostname',
           },
         },
       },
@@ -29,18 +35,17 @@ import { HeadersMiddleware } from './middlewares/headers.middleware';
     UsersModule,
     AccessTokensModule,
     TicketsModule,
-    PartnersModule,
+    PartnerModule,
     ProjectsModule,
-    BookingsModule,
+    BookingModule,
     OrdersModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(HeadersMiddleware)
-      .forRoutes('*');
+    consumer.apply(HeadersMiddleware).forRoutes('*');
   }
 }

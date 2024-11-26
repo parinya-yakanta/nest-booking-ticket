@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { PartnersController } from './partners.controller';
-import { PartnersService } from './partners.service';
-import { PartnersRepository } from 'src/repositories/partners.repository';
+import { PartnerController } from './partners.controller';
+import { PartnerService } from './partners.service';
+import { PartnerRepository } from 'src/repositories/partner.repository';
 
 @Module({
-  controllers: [PartnersController],
-  providers: [PartnersService, PartnersRepository]
+  controllers: [PartnerController],
+  providers: [PartnerService, PartnerRepository],
 })
-export class PartnersModule {}
+export class PartnerModule {}

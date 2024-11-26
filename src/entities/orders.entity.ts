@@ -1,44 +1,53 @@
-import { Collection, Entity, EntityRepositoryType, Enum, OneToMany, OneToOne, PrimaryKey, Property, Ref } from '@mikro-orm/core';
-import { BookingsEntity } from './bookings.entity';
-import { UsersEntity } from './users.entity';
+import {
+  Collection,
+  Entity,
+  EntityRepositoryType,
+  Enum,
+  OneToMany,
+  OneToOne,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { Booking } from './bookings.entity';
+import { User } from './users.entity';
+import { Transaction } from './transaction.entity';
 import { OrderStatus } from 'src/enums/orders.enum';
-import { TransactionEntity } from './transaction.entity';
-import { OrdersRepository } from 'src/repositories/orders.repository';
+import { OrderRepository } from 'src/repositories/order.repository';
 
-@Entity({ tableName: 'orders', repository: () => OrdersRepository })
-export class OrdersEntity {
-    @PrimaryKey()
-    id!: number;
+@Entity({ tableName: 'orders', repository: () => OrderRepository })
+export class Order {
+  [EntityRepositoryType]?: OrderRepository;
 
-    @Property({ unique: true })
-    code: string;
+  @PrimaryKey()
+  id!: number;
 
-    @OneToOne(() => BookingsEntity)
-    booking: Ref<BookingsEntity>;
+  @Property({ unique: true })
+  code: string;
 
-    @OneToOne(() => UsersEntity)
-    user: Ref<UsersEntity>;
+  @OneToOne(() => Booking)
+  booking: Booking;
 
-    @Property({ nullable: true })
-    description: string;
+  @OneToOne(() => User)
+  user: User;
 
-    @Property({ type: 'decimal', precision: 10, scale: 2, default: 0 })
-    price: number;
+  @Property({ nullable: true })
+  description: string;
 
-    @Property({ name: 'proof_payment', nullable: true })
-    proofPayment: string;
+  @Property({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  price: number;
 
-    @OneToMany(() => TransactionEntity, transaction => transaction.order)
-    transactions = new Collection<TransactionEntity>(this);
+  @Property({ name: 'proof_payment', nullable: true })
+  proofPayment: string;
 
-    @Enum({ items: () => OrderStatus, default: OrderStatus.PENDING })
-    status: OrderStatus = OrderStatus.PENDING;
+  @OneToMany(() => Transaction, (transaction) => transaction.order)
+  transactions = new Collection<Transaction>(this);
 
-    @Property()
-    createdAt = new Date();
+  @Enum({ items: () => OrderStatus, default: OrderStatus.PENDING })
+  status: OrderStatus = OrderStatus.PENDING;
 
-    @Property({ onUpdate: () => new Date() })
-    updatedAt = new Date();
+  @Property({ onCreate: () => new Date(), nullable: true })
+  createdAt = new Date();
 
-    [EntityRepositoryType]?: OrdersRepository;
+  @Property({ onUpdate: () => new Date() })
+  updatedAt = new Date();
 }

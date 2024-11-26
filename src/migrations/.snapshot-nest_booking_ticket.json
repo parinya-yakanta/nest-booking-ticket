@@ -49,7 +49,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "length": null,
           "mappedType": "datetime"
         },
@@ -180,7 +180,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "length": null,
           "mappedType": "datetime"
         },
@@ -350,7 +350,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "length": null,
           "mappedType": "datetime"
         },
@@ -533,7 +533,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "length": null,
           "mappedType": "datetime"
         },
@@ -694,7 +694,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "length": null,
           "mappedType": "datetime"
         },
@@ -761,8 +761,8 @@
     },
     {
       "columns": {
-        "tickets_entity_id": {
-          "name": "tickets_entity_id",
+        "ticket_id": {
+          "name": "ticket_id",
           "type": "int",
           "unsigned": true,
           "autoincrement": false,
@@ -771,8 +771,8 @@
           "length": null,
           "mappedType": "integer"
         },
-        "bookings_entity_id": {
-          "name": "bookings_entity_id",
+        "booking_id": {
+          "name": "booking_id",
           "type": "int",
           "unsigned": true,
           "autoincrement": false,
@@ -786,20 +786,20 @@
       "indexes": [
         {
           "columnNames": [
-            "tickets_entity_id"
+            "ticket_id"
           ],
           "composite": false,
-          "keyName": "tickets_bookings_tickets_entity_id_index",
+          "keyName": "tickets_bookings_ticket_id_index",
           "constraint": false,
           "primary": false,
           "unique": false
         },
         {
           "columnNames": [
-            "bookings_entity_id"
+            "booking_id"
           ],
           "composite": false,
-          "keyName": "tickets_bookings_bookings_entity_id_index",
+          "keyName": "tickets_bookings_booking_id_index",
           "constraint": false,
           "primary": false,
           "unique": false
@@ -807,8 +807,8 @@
         {
           "keyName": "PRIMARY",
           "columnNames": [
-            "tickets_entity_id",
-            "bookings_entity_id"
+            "ticket_id",
+            "booking_id"
           ],
           "composite": true,
           "constraint": true,
@@ -818,10 +818,10 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "tickets_bookings_tickets_entity_id_foreign": {
-          "constraintName": "tickets_bookings_tickets_entity_id_foreign",
+        "tickets_bookings_ticket_id_foreign": {
+          "constraintName": "tickets_bookings_ticket_id_foreign",
           "columnNames": [
-            "tickets_entity_id"
+            "ticket_id"
           ],
           "localTableName": "tickets_bookings",
           "referencedColumnNames": [
@@ -831,10 +831,10 @@
           "deleteRule": "cascade",
           "updateRule": "cascade"
         },
-        "tickets_bookings_bookings_entity_id_foreign": {
-          "constraintName": "tickets_bookings_bookings_entity_id_foreign",
+        "tickets_bookings_booking_id_foreign": {
+          "constraintName": "tickets_bookings_booking_id_foreign",
           "columnNames": [
-            "bookings_entity_id"
+            "booking_id"
           ],
           "localTableName": "tickets_bookings",
           "referencedColumnNames": [
@@ -849,8 +849,8 @@
     },
     {
       "columns": {
-        "bookings_entity_id": {
-          "name": "bookings_entity_id",
+        "booking_id": {
+          "name": "booking_id",
           "type": "int",
           "unsigned": true,
           "autoincrement": false,
@@ -859,8 +859,8 @@
           "length": null,
           "mappedType": "integer"
         },
-        "tickets_entity_id": {
-          "name": "tickets_entity_id",
+        "ticket_id": {
+          "name": "ticket_id",
           "type": "int",
           "unsigned": true,
           "autoincrement": false,
@@ -874,20 +874,20 @@
       "indexes": [
         {
           "columnNames": [
-            "bookings_entity_id"
+            "booking_id"
           ],
           "composite": false,
-          "keyName": "bookings_tickets_bookings_entity_id_index",
+          "keyName": "bookings_tickets_booking_id_index",
           "constraint": false,
           "primary": false,
           "unique": false
         },
         {
           "columnNames": [
-            "tickets_entity_id"
+            "ticket_id"
           ],
           "composite": false,
-          "keyName": "bookings_tickets_tickets_entity_id_index",
+          "keyName": "bookings_tickets_ticket_id_index",
           "constraint": false,
           "primary": false,
           "unique": false
@@ -895,8 +895,8 @@
         {
           "keyName": "PRIMARY",
           "columnNames": [
-            "bookings_entity_id",
-            "tickets_entity_id"
+            "booking_id",
+            "ticket_id"
           ],
           "composite": true,
           "constraint": true,
@@ -906,10 +906,10 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "bookings_tickets_bookings_entity_id_foreign": {
-          "constraintName": "bookings_tickets_bookings_entity_id_foreign",
+        "bookings_tickets_booking_id_foreign": {
+          "constraintName": "bookings_tickets_booking_id_foreign",
           "columnNames": [
-            "bookings_entity_id"
+            "booking_id"
           ],
           "localTableName": "bookings_tickets",
           "referencedColumnNames": [
@@ -919,10 +919,10 @@
           "deleteRule": "cascade",
           "updateRule": "cascade"
         },
-        "bookings_tickets_tickets_entity_id_foreign": {
-          "constraintName": "bookings_tickets_tickets_entity_id_foreign",
+        "bookings_tickets_ticket_id_foreign": {
+          "constraintName": "bookings_tickets_ticket_id_foreign",
           "columnNames": [
-            "tickets_entity_id"
+            "ticket_id"
           ],
           "localTableName": "bookings_tickets",
           "referencedColumnNames": [
@@ -1034,7 +1034,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "length": null,
           "mappedType": "datetime"
         },
@@ -1207,7 +1207,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "length": null,
           "mappedType": "datetime"
         },
@@ -1217,7 +1217,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
+          "nullable": false,
           "length": null,
           "mappedType": "datetime"
         }
@@ -1274,15 +1274,15 @@
           "length": null,
           "mappedType": "integer"
         },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "unsigned": false,
+        "user_id": {
+          "name": "user_id",
+          "type": "int",
+          "unsigned": true,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 255,
-          "mappedType": "string"
+          "length": null,
+          "mappedType": "integer"
         },
         "token": {
           "name": "token",
@@ -1293,26 +1293,6 @@
           "nullable": false,
           "length": 255,
           "mappedType": "string"
-        },
-        "fcm_token": {
-          "name": "fcm_token",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "abilities": {
-          "name": "abilities",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": null,
-          "mappedType": "text"
         },
         "expires_at": {
           "name": "expires_at",
@@ -1330,7 +1310,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "length": null,
           "mappedType": "datetime"
         },
@@ -1343,16 +1323,6 @@
           "nullable": false,
           "length": null,
           "mappedType": "datetime"
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "int",
-          "unsigned": true,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": null,
-          "mappedType": "integer"
         }
       },
       "name": "access_tokens",

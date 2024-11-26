@@ -1,7 +1,11 @@
+import { EntityManager } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
-import { TicketsRepository } from 'src/repositories/tickets.repository';
+import { TicketRepository } from 'src/repositories/ticket.repository';
 
 @Injectable()
 export class TicketsService {
-    constructor(private readonly ticketsRepository: TicketsRepository) {}
+  constructor(
+    private readonly ticketsRepository: TicketRepository,
+    private readonly em: EntityManager,
+  ) {}
 }
