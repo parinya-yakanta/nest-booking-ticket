@@ -1,12 +1,13 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { UserRepository } from 'src/repositories/user.repository';
-import { CreateUserDto } from './dto/create.dto';
+import { CreateUserDTO } from './dto/create.dto';
 import { generateAccessToken } from 'src/common/utils/token-generator';
 import 'dotenv/config';
 import { AccessTokenRepository } from 'src/repositories/access-token.repository';
-import { MikroORM } from '@mikro-orm/core';
+import { EntityManager, MikroORM } from '@mikro-orm/core';
 import { registerUser } from './users.interface';
-import { ExternalExceptionsHandler } from '@nestjs/core/exceptions/external-exceptions-handler';
+import { User } from 'src/entities/users.entity';
 
 @Injectable()
 export class UsersService {
@@ -24,8 +25,7 @@ export class UsersService {
     return this.usersRepository.findOne({ email });
   }
 
-  async registerUser(data: CreateUserDto): Promise<registerUser> {
-    const em = this.orm.em.fork();
+  async registerUser(data: CreateUserDTO): Promise<registerUser> {
     const userExists = await this.findOneByEmail(data.email);
 
     if (userExists) {
@@ -35,20 +35,55 @@ export class UsersService {
       );
     }
 
+    const em = this.orm.em.fork();
+    await em.begin();
     try {
-      await em.begin();
-
-      const user = this.usersRepository.create(data);
+      const { password, ...userData } = data;
+      if (!password) {
+        throw new HttpException('Password is required', HttpStatus.BAD_REQUEST);
+      }
+      const hashedPassword: string = await bcrypt.hash(password, 10);
+      const dataUser = { ...userData, password: hashedPassword };
+      const user = this.usersRepository.create(dataUser);
       await em.persistAndFlush(user);
 
       if (!user) {
-        await em.rollback();
         throw new HttpException(
           'User creation failed',
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
       }
 
+      const { token, expiresAt } = await this.createAndSaveToken(user, em);
+
+      await em.commit();
+
+      return {
+        status: true,
+        message: 'User registered successfully',
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        },
+        token: token,
+        expiresAt: expiresAt,
+      };
+    } catch (error) {
+      await em.rollback();
+      console.error('Error during user registration:', error);
+      throw new HttpException(
+        'User registration failed: ' + (error as any).message,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async createAndSaveToken(
+    user: User,
+    em: EntityManager,
+  ): Promise<{ token: string; expiresAt: Date }> {
+    try {
       const newAccessToken = generateAccessToken();
       const expiresAt = new Date();
       expiresAt.setDate(
@@ -64,6 +99,7 @@ export class UsersService {
 
       const tokenEntity = this.tokensRepository.create(dataUser);
       await em.persistAndFlush(tokenEntity);
+
       if (!tokenEntity) {
         await em.rollback();
         throw new HttpException(
@@ -72,23 +108,12 @@ export class UsersService {
         );
       }
 
-      await em.commit();
-
-      return {
-        status: true,
-        message: 'User registered successfully',
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        },
-        token: newAccessToken,
-      };
+      return { token: newAccessToken, expiresAt };
     } catch (error) {
+      console.error('Error during token creation:', error);
       await em.rollback();
-      console.error('Error during user registration:', error);
       throw new HttpException(
-        'User registration failed: ' + (error as any).message,
+        'Token creation failed: ' + (error as any).message,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

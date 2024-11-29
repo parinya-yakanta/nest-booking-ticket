@@ -7,7 +7,7 @@ import {
   Version,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CreateUserDto } from './dto/create.dto';
+import { CreateUserDTO } from './dto/create.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -19,7 +19,7 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.OK })
   @Version('1')
   @Post('register')
-  async register(@Body() dto: CreateUserDto) {
+  async register(@Body() dto: CreateUserDTO) {
     return this.usersService.registerUser(dto);
   }
 }
