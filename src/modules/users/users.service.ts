@@ -1,20 +1,20 @@
-import { Transactional } from '@mikro-orm/core';
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { UserRepository } from 'src/repositories/user.repository';
-import { CreateUserDto, CreateUserAccessTokenDto } from './dto/create.dto';
+import { CreateUserDto } from './dto/create.dto';
 import { generateAccessToken } from 'src/common/utils/token-generator';
 import 'dotenv/config';
 import { AccessTokenRepository } from 'src/repositories/access-token.repository';
+import { MikroORM } from '@mikro-orm/core';
+import { registerUser } from './users.interface';
+import { ExternalExceptionsHandler } from '@nestjs/core/exceptions/external-exceptions-handler';
 
 @Injectable()
 export class UsersService {
   constructor(
+    private orm: MikroORM,
     private readonly usersRepository: UserRepository,
     private readonly tokensRepository: AccessTokenRepository,
-  ) {
-    console.log('UsersService usersRepository: ', usersRepository);
-    console.log('UsersService tokensRepository: ', tokensRepository);
-  }
+  ) {}
 
   async findOneById(id: number) {
     return this.usersRepository.findOne({ id });
@@ -24,41 +24,73 @@ export class UsersService {
     return this.usersRepository.findOne({ email });
   }
 
-  @Transactional()
-  async registerUser(data: CreateUserDto) {
-    console.log('usersRepository:', this.usersRepository);
-    console.log('Creating user with data:', data);
-    try {
-      const user = this.usersRepository.create(data);
-      console.log('Created user:', user);
-      const token = this.createAccessToken(user.id);
+  async registerUser(data: CreateUserDto): Promise<registerUser> {
+    const em = this.orm.em.fork();
+    const userExists = await this.findOneByEmail(data.email);
 
-      return { user, token };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error('User registration failed: ' + error.message);
-      } else {
-        throw new Error('User registration failed');
-      }
+    if (userExists) {
+      throw new HttpException(
+        'User already exists',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
-  }
 
-  private async createAccessToken(userId: number): Promise<string> {
-    const newAccessToken = generateAccessToken();
+    try {
+      await em.begin();
 
-    const expiresAt = new Date();
-    expiresAt.setDate(
-      expiresAt.getDate() +
-        parseInt(process.env.ACCESS_TOKEN_EXPIRATION_IN_DAYS, 10),
-    );
+      const user = this.usersRepository.create(data);
+      await em.persistAndFlush(user);
 
-    const dataUser: CreateUserAccessTokenDto = {
-      userId: userId,
-      token: newAccessToken,
-      expiresAt: expiresAt,
-    };
+      if (!user) {
+        await em.rollback();
+        throw new HttpException(
+          'User creation failed',
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
 
-    const tokenEntity = this.tokensRepository.create(dataUser);
-    return tokenEntity.token;
+      const newAccessToken = generateAccessToken();
+      const expiresAt = new Date();
+      expiresAt.setDate(
+        expiresAt.getDate() +
+          parseInt(process.env.ACCESS_TOKEN_EXPIRATION_IN_DAYS || '1', 10),
+      );
+
+      const dataUser = {
+        user: user,
+        token: newAccessToken,
+        expiresAt: expiresAt,
+      };
+
+      const tokenEntity = this.tokensRepository.create(dataUser);
+      await em.persistAndFlush(tokenEntity);
+      if (!tokenEntity) {
+        await em.rollback();
+        throw new HttpException(
+          'Token creation failed',
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+
+      await em.commit();
+
+      return {
+        status: true,
+        message: 'User registered successfully',
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        },
+        token: newAccessToken,
+      };
+    } catch (error) {
+      await em.rollback();
+      console.error('Error during user registration:', error);
+      throw new HttpException(
+        'User registration failed: ' + (error as any).message,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

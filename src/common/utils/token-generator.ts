@@ -5,9 +5,10 @@ export function generateRefreshAccessToken(): string {
 }
 
 export function generateAccessToken(this: any): string {
+  const generateRefreshAccessToken = randomBytes(18).toString('hex');
   const randomString = randomBytes(16).toString('hex');
   const accessToken = Buffer.from(
-    `${randomString}:${this.generateRefreshAccessToken()}`,
+    `${randomString}:${generateRefreshAccessToken}`,
     'utf8',
   ).toString('base64');
   return accessToken;

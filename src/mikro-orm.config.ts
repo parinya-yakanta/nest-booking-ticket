@@ -18,6 +18,7 @@ const config: Options = {
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   highlighter: new SqlHighlighter(),
+  allowGlobalContext: true,
   debug: false,
   logger: (message: string) => Logger.log(message),
 };

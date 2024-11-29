@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsDate,
   IsDefined,
-  IsNumber,
+  IsNumberString,
   IsOptional,
   IsString,
   MinLength,
@@ -28,9 +28,9 @@ export class CreateUserDto {
 
 export class CreateUserAccessTokenDto {
   @IsDefined()
-  @IsNumber()
+  @IsNumberString()
   @ApiProperty({ example: 1, description: 'Unique identifier for the user' })
-  userId: number;
+  userId!: number | string;
 
   @IsOptional()
   @IsString()
