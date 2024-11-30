@@ -18,7 +18,7 @@ export class AccessToken {
   @PrimaryKey()
   id!: number;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { deleteRule: 'cascade' })
   user: User;
 
   @Property()

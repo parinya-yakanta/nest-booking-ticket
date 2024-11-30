@@ -35,7 +35,7 @@ export class Booking {
   @Enum({ items: () => BookingStatus, default: BookingStatus.PENDING })
   status: BookingStatus = BookingStatus.PENDING;
 
-  @ManyToOne(() => Partner)
+  @ManyToOne(() => Partner, { deleteRule: 'set null', nullable: true })
   partner: Partner;
 
   @ManyToMany(() => Ticket)

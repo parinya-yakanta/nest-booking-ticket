@@ -7,7 +7,7 @@ export class Transaction {
   @PrimaryKey()
   id!: number;
 
-  @ManyToOne(() => Order)
+  @ManyToOne(() => Order, { deleteRule: 'cascade' })
   order: Order;
 
   @Property({ type: 'decimal', precision: 10, scale: 2, default: 0 })

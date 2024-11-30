@@ -240,6 +240,7 @@
             "id"
           ],
           "referencedTableName": "users",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },
@@ -410,6 +411,7 @@
             "id"
           ],
           "referencedTableName": "partners",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },
@@ -605,6 +607,7 @@
             "id"
           ],
           "referencedTableName": "projects",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },
@@ -684,7 +687,7 @@
           "unsigned": true,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "length": null,
           "mappedType": "integer"
         },
@@ -754,6 +757,7 @@
             "id"
           ],
           "referencedTableName": "partners",
+          "deleteRule": "set null",
           "updateRule": "cascade"
         }
       },
@@ -963,7 +967,7 @@
           "unsigned": true,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "length": null,
           "mappedType": "integer"
         },
@@ -973,7 +977,7 @@
           "unsigned": true,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "length": null,
           "mappedType": "integer"
         },
@@ -1104,6 +1108,7 @@
             "id"
           ],
           "referencedTableName": "bookings",
+          "deleteRule": "set null",
           "updateRule": "cascade"
         },
         "orders_user_id_foreign": {
@@ -1116,6 +1121,7 @@
             "id"
           ],
           "referencedTableName": "users",
+          "deleteRule": "set null",
           "updateRule": "cascade"
         }
       },
@@ -1257,6 +1263,7 @@
             "id"
           ],
           "referencedTableName": "orders",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },
@@ -1360,6 +1367,7 @@
             "id"
           ],
           "referencedTableName": "users",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },

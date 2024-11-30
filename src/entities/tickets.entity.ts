@@ -25,7 +25,7 @@ export class Ticket {
   @ManyToOne(() => Partner)
   partner: Partner;
 
-  @ManyToOne(() => Project)
+  @ManyToOne(() => Project, { deleteRule: 'cascade' })
   project: Project;
 
   @Property()

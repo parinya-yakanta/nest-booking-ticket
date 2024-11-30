@@ -33,7 +33,7 @@ export class Partner {
   @Property({ type: 'text', nullable: true })
   address: string;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { deleteRule: 'cascade' })
   user: User;
 
   @OneToMany(() => Ticket, (ticket) => ticket.partner)

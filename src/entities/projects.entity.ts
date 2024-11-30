@@ -23,7 +23,7 @@ export class Project {
   @Property({ unique: true })
   code: string;
 
-  @ManyToOne(() => Partner)
+  @ManyToOne(() => Partner, { deleteRule: 'cascade' })
   partner: Partner;
 
   @OneToMany(() => Ticket, (ticket) => ticket.project)

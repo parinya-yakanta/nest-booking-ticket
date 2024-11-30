@@ -24,10 +24,10 @@ export class Order {
   @Property({ unique: true })
   code: string;
 
-  @OneToOne(() => Booking)
+  @OneToOne(() => Booking, { deleteRule: 'set null', nullable: true })
   booking: Booking;
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, { deleteRule: 'set null', nullable: true })
   user: User;
 
   @Property({ nullable: true })
