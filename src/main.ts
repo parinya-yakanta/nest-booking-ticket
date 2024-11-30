@@ -23,6 +23,7 @@ async function bootstrap() {
     .setDescription('The API Documentation for the Booking tickets application')
     .setVersion('1.0')
     .addTag('booking-tickets')
+    .addBearerAuth()
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);

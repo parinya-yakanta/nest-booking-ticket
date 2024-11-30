@@ -118,4 +118,8 @@ export class UsersService {
       );
     }
   }
+
+  async getAllUsers() {
+    return this.usersRepository.findAll();
+  }
 }
