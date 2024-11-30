@@ -26,6 +26,13 @@ export class CreateUserDTO {
   password: string;
 }
 
+export class UpdateUserDTO {
+  @IsDefined()
+  @IsString()
+  @ApiProperty({ example: 'app test update' })
+  name: string;
+}
+
 export class CreateUserAccessTokenDto {
   @IsDefined()
   @IsNumberString()

@@ -1,12 +1,12 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from 'src/repositories/user.repository';
-import { CreateUserDTO } from './dto/create.dto';
+import { CreateUserDTO, UpdateUserDTO } from './dto/create.dto';
 import { generateAccessToken } from 'src/common/utils/token-generator';
 import 'dotenv/config';
 import { AccessTokenRepository } from 'src/repositories/access-token.repository';
 import { EntityManager, MikroORM } from '@mikro-orm/core';
-import { registerUser } from './users.interface';
+import { registerUser, UserResponse } from './users.interface';
 import { User } from 'src/entities/users.entity';
 
 @Injectable()
@@ -121,5 +121,45 @@ export class UsersService {
 
   async getAllUsers() {
     return this.usersRepository.findAll();
+  }
+
+  async getUserById(id: number) {
+    const user = await this.usersRepository.findOne({ id });
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
+  }
+
+  async updateUserById(id: number, data: UpdateUserDTO): Promise<UserResponse> {
+    const user = await this.usersRepository.findOne({ id });
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    const em = this.orm.em.fork();
+    await em.begin();
+    try {
+      const updatedUser = this.usersRepository.assign(user, data);
+      await em.persistAndFlush(updatedUser);
+
+      await em.commit();
+
+      return {
+        id: updatedUser.id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+      };
+    } catch (error) {
+      await em.rollback();
+      console.error('Error during user update:', error);
+      throw new HttpException(
+        'User update failed: ' + (error as any).message,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
