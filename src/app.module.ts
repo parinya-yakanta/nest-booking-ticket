@@ -11,6 +11,8 @@ import { LoggerModule } from 'nestjs-pino';
 import { HeadersMiddleware } from './middlewares/headers.middleware';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -32,6 +34,7 @@ import { ConfigModule } from '@nestjs/config';
         },
       },
     }),
+    ScheduleModule.forRoot(),
     UsersModule,
     AccessTokensModule,
     TicketsModule,
@@ -40,9 +43,9 @@ import { ConfigModule } from '@nestjs/config';
     BookingModule,
     OrdersModule,
     AuthModule,
+    TasksModule,
   ],
   controllers: [],
-  providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
